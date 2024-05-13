@@ -38,7 +38,13 @@ public class ToDoApp {
     }
 
     static void displayMenu() {
-
+        System.out.println("\n---- ToDoApp Menu ----");
+        System.out.println("1. Create Task");
+        System.out.println("2. Edit Task");
+        System.out.println("3. Delete Task");
+        System.out.println("4. Mark Task as Complete");
+        System.out.println("5. Display Tasks");
+        System.out.println("6. Exit");
     }
 
     static void createTask() {  // Stark
