@@ -3,25 +3,22 @@ import java.util.Scanner;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-
 public class ToDoApp {
-    static Scanner scanner = new Scanner(System.in);
+    static Scanner scanner = new Scanner(System.in); // Agile
     static ArrayList<Task> tasks = new ArrayList<>();
 
     public static void main(String[] args) {
         while (true) {
             displayMenu();
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume newline character
-
+            int choice = getIntInput("Enter your choice: ");
             switch (choice) {
-                case 1:
+                case 1: // Stark
                     createTask();
                     break;
-                case 2:
+                case 2: // Menna
                     editTask();
                     break;
-                case 3:
+                case 3: // Hla
                     deleteTask();
                     break;
                 case 4:
@@ -31,116 +28,172 @@ public class ToDoApp {
                     displayTasks();
                     break;
                 case 6:
-                    System.out.println("Exiting ToDo App. Goodbye!");
                     return;
+                    
                 default:
                     System.out.println("Invalid choice. Please try again.");
+
             }
         }
     }
 
     static void displayMenu() {
-        System.out.println("\n---- ToDo App Menu ----");
-        System.out.println("1. Create Task"); // Stark
-        System.out.println("2. Edit Task"); // Menna
-        System.out.println("3. Delete Task"); // Hala
-        System.out.println("4. Mark Task as Complete"); // Gemy
-        System.out.println("5. Display Tasks"); // Abdelrahman
-        System.out.println("6. Exit"); // Negroo
-        System.out.print("Enter your choice: ");
+
     }
 
-    static void createTask() {
+    static void createTask() {  // Stark
         System.out.println("\n---- Create Task ----");
-        System.out.print("Enter task title: ");
-        String title = scanner.nextLine();
-        System.out.print("Enter task description: ");
-        String description = scanner.nextLine();
-        System.out.print("Enter due date (DD/MM/YYYY): ");
-        String dueDate = scanner.nextLine();
-        System.out.print("Enter priority (low, medium, high): ");
-        String priority = scanner.nextLine().toLowerCase(); // Convert to lowercase for easier validation
-
-        // Validate priority
-        if (!priority.equals("low") && !priority.equals("medium") && !priority.equals("high")) {
-            System.out.println("Invalid priority. Please enter 'low', 'medium', or 'high'.");
-            return; // Exit task creation if priority is invalid
-        }
-
-        Task task = new Task(title, description, dueDate, priority);
-        tasks.add(task);
+        String title = getStringInput("Enter task title: ");
+        String description = getStringInput("Enter task description: ");
+        LocalDate dueDate = getDateInput("Enter due date (DD/MM/YYYY): ");
+        String priority = getPriorityInput("Enter priority (low, medium, high): ");
+        tasks.add(new Task(title, description, dueDate, priority));
         System.out.println("Task created successfully!");
     }
 
-    static void editTask() {
+    static void editTask() { // Menna
         System.out.println("\n---- Edit Task ----");
-        System.out.print("Enter index of the task to edit: ");
-        int index = scanner.nextInt();
-        scanner.nextLine(); // Consume newline character
+        int index = getIndexInput("Enter index of the task to edit: ");
+        Task task = tasks.get(index);
+        while (true) {
+            System.out.println("Select an attribute to edit:");
+            System.out.println("1. Title");
+            System.out.println("2. Description");
+            System.out.println("3. Due Date");
+            System.out.println("4. Priority");
+            System.out.println("5. Exit");
+            int choice = getIntInput("Enter your choice: ");
+            switch (choice) {
+                case 1:
+                    task.setTitle(getStringInput("Enter new title: "));
+                    System.out.println("Title updated successfully!");
+                    break;
+                case 2:
+                    task.setDescription(getStringInput("Enter new description: "));
+                    System.out.println("Description updated successfully!");
+                    break;
+                case 3:
+                    task.setDueDate(getDateInput("Enter new due date (DD/MM/YYYY): "));
+                    System.out.println("Due date updated successfully!");
+                    break;
+                case 4:
+                    task.setPriority(getStringInput("Enter new priority (low, medium, high): ").toLowerCase());
+                    System.out.println("Priority updated successfully!");
+                    break;
+                case 5:
+                    return;
 
-        if (index >= 0 && index < tasks.size()) {
-            Task task = tasks.get(index);
-            System.out.print("Enter new title: ");
-            task.setTitle(scanner.nextLine());
-            System.out.print("Enter new description: ");
-            task.setDescription(scanner.nextLine());
-            System.out.print("Enter new due date (DD/MM/YYYY): ");
-            task.setDueDate(scanner.nextLine());
-            System.out.print("Enter new priority (low, medium, high): ");
-            String priority = scanner.nextLine().toLowerCase();
-
-            // Validate priority
-            if (!priority.equals("low") && !priority.equals("medium") && !priority.equals("high")) {
-                System.out.println("Invalid priority. Please enter 'low', 'medium', or 'high'.");
-                return; // Exit task editing if priority is invalid
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+                    // break;
+                }
             }
-
-            task.setPriority(priority);
-            System.out.println("Task edited successfully!");
-        } else {
-            System.out.println("Invalid task index.");
-        }
+        
     }
 
-    static void deleteTask() {
+    static void deleteTask() {  // Hla
         System.out.println("\n---- Delete Task ----");
-        System.out.print("Enter index of the task to delete: ");
-        int index = scanner.nextInt();
-        scanner.nextLine(); // Consume newline character
-
-        if (index >= 0 && index < tasks.size()) {
+        int index = getIndexInput("Enter index of the task to delete: "); // Display Tasks()
+        if (isValidIndex(index)) {
             tasks.remove(index);
             System.out.println("Task deleted successfully!");
-        } else {
-            System.out.println("Invalid task index.");
         }
     }
 
-    static void markTaskComplete() {
+    static void markTaskComplete() { // Gemy
         System.out.println("\n---- Mark Task as Complete ----");
-        System.out.print("Enter index of the task to mark as complete: ");
-        int index = scanner.nextInt();
-        scanner.nextLine(); // Consume newline character
-
-        if (index >= 0 && index < tasks.size()) {
-            Task task = tasks.get(index);
-            task.setCompleted(true);
-            // You could add logic here to store completion timestamp or other information
+        int index = getIndexInput("Enter index of the task to mark as complete: ");   
+        if (isValidIndex(index)) { 
+            tasks.get(index).setCompleted(true);
             System.out.println("Task marked as complete!");
-        } else {
-            System.out.println("Invalid task index.");
         }
     }
 
-    static void displayTasks() {
-        System.out.println("\n---- Tasks ----");
-        for (int i = 0; i < tasks.size(); i++) {
-            System.out.println("Index: " + i);
-            tasks.get(i).printTask();
-            System.out.println("-----*---*-----");
-            
+    static void displayTasks() { // Abdelrahman
+        if (tasks.isEmpty()) {
+            System.out.println("There are no tasks");
+        } else {
+            System.out.println("\n---- Tasks ----");
+            for (int i = 0; i < tasks.size(); i++) {
+                System.out.println("Index: " + (i + 1));
+                tasks.get(i).printTask();
+                System.out.println("-----*---*-----");
+            }
         }
     }
+
+    static int getIntInput(String message) { 
+        System.out.print(message);
+        while (!scanner.hasNextInt()) {
+            System.out.println("Invalid input. Please enter a number.");
+            System.out.print(message);
+            scanner.next(); // Consume invalid input
+        }
+        int choice = scanner.nextInt();
+        scanner.nextLine(); // Consume newline character
+        return choice;
+    }
+
+
+    static String getStringInput(String message) {
+        System.out.print(message);
+        String input = scanner.nextLine().trim(); // String
+        while (input.isEmpty()) { // isEmpty() 
+            System.out.println("Input cannot be blank. Please enter a value.");
+            System.out.print(message);
+            input = scanner.nextLine().trim();
+        }
+        return input;
+    }
+    
+    static LocalDate getDateInput(String message) {
+        System.out.print(message);
+        while (true) {
+            try {
+                return LocalDate.parse(scanner.nextLine(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            } 
+            catch (Exception e) {
+                System.out.println("Invalid date format. Please enter date in format DD/MM/YYYY.");
+                System.out.print(message);
+            }
+        }
+    }
+
+    static String getPriorityInput(String message) {
+        String priority;
+        do {
+            System.out.println(message);
+            priority = getStringInput("").toLowerCase();
+            if (!isValidPriority(priority)) {
+                System.out.println("Invalid priority. Please enter either 'low', 'medium', or 'high'.");
+            }
+        } while (!isValidPriority(priority));
+        return priority;
+    }
+
+    static boolean isValidPriority(String priority) {
+        return priority.equals("low") || priority.equals("medium") || priority.equals("high");
+    }
+
+    static int getIndexInput(String message) {
+        int index;
+        do {
+            index = getIntInput(message);
+        } while (!isValidIndex(index - 1));
+        return index -1 ;
+    }
+
+    static boolean isValidIndex(int index) {
+        if (tasks.isEmpty()) {
+            System.out.println("No tasks available.");
+            return false;
+        } else if (index < 0 || index >= tasks.size()) { 
+            System.out.println("Invalid task index.");
+            return false;
+        }
+        return true;
+    }
+
 }
 
 class Task {
@@ -148,48 +201,47 @@ class Task {
     private String description;
     private LocalDate dueDate;
     private String priority;
-    private boolean completed;
+    private boolean completed; // true or false = false
 
-    public Task(String title, String description, String dueDate, String priority) {
+    
+    // Create Task 
+    public Task(String title, String description, LocalDate dueDate, String priority) { 
         this.title = title;
         this.description = description;
-        this.dueDate = LocalDate.parse(dueDate, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        this.dueDate = dueDate;
         this.priority = priority;
         this.completed = false;
     }
+    ///////////////////////////////////////
 
-    public void setTitle(String title) {
+    // edit Task ()
+    public void setTitle(String title) {   
         this.title = title;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(String description) {     
         this.description = description;
     }
 
-    public void setDueDate(String dueDate) {
-        this.dueDate = LocalDate.parse(dueDate, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+    public void setDueDate(LocalDate dueDate) {     
+        this.dueDate = dueDate;
     }
 
-    public void setPriority(String priority) {
-        // Implement validation and logic to store the priority
+    public void setPriority(String priority) {   
         this.priority = priority;
     }
 
-    public void setCompleted(Boolean completed) {
-        // Implement validation and logic to store the priority
-        this.completed = true;
+    public void setCompleted(boolean completed) {    // true / false
+        this.completed = completed;
     }
+    ///////////////////////////////////////
 
-    public void printTask() {
-        System.out.print("Title: ");
-        System.out.println(this.title);
-        System.out.print("Description: ");
-        System.out.println(this.description);
-        System.out.print("Due Date: ");
-        System.out.println(this.dueDate);
-        System.out.print("Priority Level: ");
-        System.out.println(this.priority);
-        System.out.print("Completed: ");
-        System.out.println(this.completed);
+    public void printTask() {  // Display Tasks()
+        System.out.println("Title: " + this.title);
+        System.out.println("Description: " + this.description);
+        System.out.println("Due Date: " + this.dueDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        System.out.println("Priority Level: " + this.priority);
+        System.out.println("Completed: " + this.completed);
     }
+    ///////////////////////////////////////
 }
